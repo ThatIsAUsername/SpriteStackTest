@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
@@ -15,6 +17,12 @@ import javax.swing.event.MouseInputListener;
 public class SpriteStackTest extends JFrame implements KeyListener, MouseInputListener, ActionListener
 {
   private static final long serialVersionUID = -6735195822619656602L;
+
+  private static final double RADTODEG = 57.29578;
+  private static final double DEGTORAD = 1/RADTODEG;
+
+  private int mouseX = -1;
+  private int mouseY = -1;
 
   Sprite mySprite = null;
   Dimension myDimension = new Dimension(500, 500);
@@ -33,6 +41,8 @@ public class SpriteStackTest extends JFrame implements KeyListener, MouseInputLi
     setPreferredSize(myDimension);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     addKeyListener(this);
+    addMouseMotionListener(this);
+    addMouseListener(this);
     pack();
     setVisible(true);
 
@@ -56,10 +66,10 @@ public class SpriteStackTest extends JFrame implements KeyListener, MouseInputLi
   }
 
   @Override
-  public void mouseMoved(MouseEvent arg0)
+  public void mouseMoved(MouseEvent event)
   {
-    // TODO Auto-generated method stub
-    
+    mouseX = event.getX();
+    mouseY = event.getY();
   }
 
   @Override
@@ -86,12 +96,43 @@ public class SpriteStackTest extends JFrame implements KeyListener, MouseInputLi
     gg.fillRect(100, 100, 100, 50);
 
     // Draw the sprite
-    gg.drawImage(mySprite.getFrame(0), 100, 100, null);
+    int x = 250;
+    int y = 250;
+    
+    // Find the angle to the mouse's location.
+    double angleRad = getAngle(x, y, mouseX, mouseY) * DEGTORAD;
+    
+    for( int i = 0; i < mySprite.numFrames(); ++i )
+    {
+      BufferedImage image = mySprite.getFrame(i);
+
+      int w = image.getWidth();
+      int h = image.getHeight();
+      AffineTransform scaleTransform = new AffineTransform();
+      // last-in-first-applied: rotate, scale
+      //scaleTransform.scale(scaleX, scaleY);
+      scaleTransform.rotate(angleRad, w / 2, h / 2);
+      AffineTransformOp scaleOp = new AffineTransformOp(
+              scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+      BufferedImage rotatedImg = scaleOp.filter(image, null);
+
+      gg.drawImage(rotatedImg, x-(w/2), y-(h/2), null);
+      y--;
+    }
     
     g.drawImage(buffer, 0, 0, null);
   }
   
-  
+  /** Return the angle from x1,y1 to x2,y2 in degrees */
+  private double getAngle(int x1, int y1, int x2, int y2) {
+    double angle = (float) Math.toDegrees(Math.atan2(y2-y1, x2-x1));
+
+    if(angle < 0){
+        angle += 360;
+    }
+
+    return angle;
+  }
   
   
   

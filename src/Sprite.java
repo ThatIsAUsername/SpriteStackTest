@@ -99,7 +99,10 @@ public class Sprite
       // Cut the sprite-sheet into individual frames.
       while ((spriteNum + 1) * spriteWidthPx <= spriteSheet.getWidth())
       {
-        spriteImages.add(spriteSheet.getSubimage(xOffset, yOffset, spriteWidthPx, spriteHeightPx));
+        BufferedImage frame = createDefaultBlankSprite(spriteWidthPx, spriteHeightPx);
+        Graphics g = frame.getGraphics();
+        g.drawImage(spriteSheet.getSubimage(xOffset, yOffset, spriteWidthPx, spriteHeightPx), 0, 0, spriteWidthPx, spriteHeightPx, null);
+        spriteImages.add(frame);
         xOffset += spriteWidthPx;
         spriteNum++;
       }
@@ -198,6 +201,13 @@ public class Sprite
     }
   }
 
+  /**
+   * Sets every pixel of the given color to transparent, but otherwise preserves the pixel's
+   * color (so it could be made non-transparent again, in theory). This method relies on the
+   * Sprite being composed of ARGB images, as it makes assumptions about the data representation
+   * of the underlying raster.
+   * @param color The Color to set transparent in this Sprite.
+   */
   public void setColorTransparent(Color color)
   {
     for( BufferedImage bi : spriteImages )
@@ -217,12 +227,10 @@ public class Sprite
             && (color.getGreen() == raster[x-2])
             && (color.getBlue() == raster[x-1]))
         {
-          System.out.println("blanking index " + x);
           raster[x] = 0;
         }
       }
 
-      System.out.println("creating raster of size " + rasterSize);
       bi.getRaster().setPixels(0, 0, bi.getWidth(), bi.getHeight(), raster);
     }
   }
