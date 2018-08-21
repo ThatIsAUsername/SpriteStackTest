@@ -180,7 +180,6 @@ public class SpriteStackTest extends JFrame implements KeyListener, MouseInputLi
       BufferedImage bi = new BufferedImage(orig.getWidth(), orig.getHeight(), BufferedImage.TYPE_INT_ARGB);
       bi.getGraphics().drawImage(orig, 0, 0, null);
       int rasterSize = bi.getWidth() * bi.getHeight() * 4; // *4 for RGBA
-      System.out.println("creating raster of size " + rasterSize);
       int[] raster = new int[rasterSize];
       bi.getRaster().getPixels(0, 0, bi.getWidth(), bi.getHeight(), raster);
 
