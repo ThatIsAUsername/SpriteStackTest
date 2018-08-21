@@ -213,7 +213,7 @@ public class Sprite
     for( BufferedImage bi : spriteImages )
     {
       System.out.println("creating raster of size " + (bi.getWidth() * bi.getHeight() * 4));
-      int rasterSize = 16384; //bi.getWidth() * bi.getHeight() * 4 - 10000;
+      int rasterSize = bi.getWidth() * bi.getHeight() * 4; // *4 for RGBA
       System.out.println("creating raster of size " + rasterSize);
       int[] raster = new int[rasterSize];
       bi.getRaster().getPixels(0, 0, bi.getWidth(), bi.getHeight(), raster);
