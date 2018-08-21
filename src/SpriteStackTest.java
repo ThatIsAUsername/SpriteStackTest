@@ -29,6 +29,8 @@ public class SpriteStackTest extends JFrame implements KeyListener, MouseInputLi
   Sprite mySpriteShadow = null;
   Dimension myDimension = new Dimension(500, 500);
 
+  private int scaleFactor = 2;
+
   public SpriteStackTest()
   {
     // Load the sprite, and make the background transparent.
@@ -115,15 +117,15 @@ public class SpriteStackTest extends JFrame implements KeyListener, MouseInputLi
       int h = image.getHeight();
       AffineTransform scaleTransform = new AffineTransform();
       // last-in-first-applied: rotate, scale
-      //scaleTransform.scale(scaleX, scaleY);
+      scaleTransform.scale(scaleFactor, scaleFactor);
       scaleTransform.rotate(angleRad, w / 2, h / 2);
       AffineTransformOp scaleOp = new AffineTransformOp(
               scaleTransform, AffineTransformOp.TYPE_BILINEAR);
       BufferedImage rotatedImg = scaleOp.filter(image, null);
 
-      gg.drawImage(rotatedImg, x-(w/2), y-(h/2), null);
-      x-=1;
-      //y+=1;
+      gg.drawImage(rotatedImg, x-(w*scaleFactor/2), y-(h*scaleFactor/2), null);
+      x-=1*scaleFactor;
+      //y+=1*scaleFactor;
     }
 
     // Reset the center.
@@ -139,14 +141,14 @@ public class SpriteStackTest extends JFrame implements KeyListener, MouseInputLi
       int h = image.getHeight();
       AffineTransform scaleTransform = new AffineTransform();
       // last-in-first-applied: rotate, scale
-      //scaleTransform.scale(scaleX, scaleY);
+      scaleTransform.scale(scaleFactor, scaleFactor);
       scaleTransform.rotate(angleRad, w / 2, h / 2);
       AffineTransformOp scaleOp = new AffineTransformOp(
               scaleTransform, AffineTransformOp.TYPE_BILINEAR);
       BufferedImage rotatedImg = scaleOp.filter(image, null);
 
-      gg.drawImage(rotatedImg, x-(w/2), y-(h/2), null);
-      y--;
+      gg.drawImage(rotatedImg, x-(w*scaleFactor/2), y-(h*scaleFactor/2), null);
+      y-=1*scaleFactor;
     }
     
     g.drawImage(buffer, 0, 0, null);
